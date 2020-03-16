@@ -40,12 +40,7 @@ import MapView, {
   Circle,
   Polygon,
 } from 'react-native-maps';
-const inittialState = {
-  latitude: -62.000132,
-  longitude: 100.23434,
-  latitudeDelta: 0,
-  longitudeDelta: 0.05,
-};
+
 // console.state(props);
 export default class Maps extends React.Component {
   constructor(props) {
@@ -59,12 +54,12 @@ export default class Maps extends React.Component {
         latitudeDelta: 0.001,
       },
 
-      coordinates: this.props.route.params.friends,
+      fransCoordinates: this.props.route.params.friends,
     };
   }
 
-  onCarouselItemChange = index => {
-    let location = this.state.coordinates[index];
+  carause_map = index => {
+    let location = this.state.fransCoordinates[index];
 
     this._map.animateToRegion({
       latitude: location.latitude,
@@ -75,7 +70,7 @@ export default class Maps extends React.Component {
 
     this.state.markers[index].showCallout();
   };
-  myMarker() {
+  market() {
     Geolocation.getCurrentPosition(position => {
       this._map.animateToRegion({
         latitude: position.coords.latitude,
@@ -86,7 +81,7 @@ export default class Maps extends React.Component {
     });
   }
 
-  locateCurrentPosition = () => {
+  CurrentPosition = () => {
     Geolocation.getCurrentPosition(position => {
       // console.log(JSON.stringify(position));
       let initialPosition = {
@@ -112,22 +107,7 @@ export default class Maps extends React.Component {
     });
   }
 
-  requestLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
-      var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-      console.log('iPhone: ' + response);
-      if (response === 'granted') {
-        // this.locateCurrentPosition();
-      }
-    } else {
-      var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      console.log('Android: ' + response);
-      if (response === 'granted') {
-        // this.locateCurrentPosition();
-      }
-    }
-  };
-  onMakerPressed = (location, index) => {
+  onPress = (location, index) => {
     this._map.animateToRegion({
       latitude: location.latitude,
       longitude: location.longitude,
@@ -136,16 +116,29 @@ export default class Maps extends React.Component {
     });
     this._carousel.snapToItem(index);
   };
-  renderCarouseItem = ({item, index}) => (
+  renderCarouse = ({item, index}) => (
     <TouchableWithoutFeedback
       onPress={() => {
-        this.onMakerPressed(item, index);
+        this.onPress(item, index);
       }}>
-      <View style={styles.cardContainer}>
-        <Text style={styles.cardContainerTitle}>
-          <Text style={styles.cardTitle}>{item.name}</Text>
-        </Text>
-        <Image style={styles.cardImage} source={{uri: `${item.avatar}`}} />
+      <View
+        style={{
+          alignSelf: 'center',
+          height: 70,
+          width: 70,
+          padding: 5,
+          borderRadius: 10,
+        }}>
+        <Image
+          style={{
+            height: '100%',
+            width: ' 100%',
+            bottom: 0,
+            position: 'relative',
+            borderRadius: 10,
+          }}
+          source={{uri: `${item.avatar}`}}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -160,29 +153,25 @@ export default class Maps extends React.Component {
             style={styles.map}
             showsUserLocation
             initialRegion={this.state.initialPosition}>
-            {/* <Circle
-          center={this.state.initialPosition}
-          radius={500}
-          strokeColor={'#9999ff'}
-          strokeWidth={1}
-          fillColor={'rgba(153, 187, 255,0.5)'}
-        /> */}
-            <Polygon coordinates={this.state.coordinates} strokeWidth={0} />
-            {this.state.coordinates.map((marker, index) => (
+            <Polygon
+              coordinates={this.state.fransCoordinates}
+              strokeWidth={0}
+            />
+            {this.state.fransCoordinates.map((marker, index) => (
               <Marker
                 // key={marker.id}
                 ref={ref => (this.state.markers[index] = ref)}
-                onPress={() => this.onMakerPressed(marker, index)}
+                onPress={() => this.onPress(marker, index)}
                 coordinate={{
                   latitude: marker.latitude,
                   longitude: marker.longitude,
                 }}>
                 <Thumbnail source={{uri: `${marker.avatar}`}} />
-                <Callout>
+                {/* <Callout>
                   <View>
                     <Text style={styles.textCenter}>{marker.name}</Text>
                   </View>
-                </Callout>
+                </Callout> */}
               </Marker>
             ))}
           </MapView>
@@ -191,13 +180,17 @@ export default class Maps extends React.Component {
           ref={c => {
             this._carousel = c;
           }}
-          data={this.state.coordinates}
-          containerCustomStyle={styles.carousel}
-          renderItem={this.renderCarouseItem}
+          data={this.state.fransCoordinates}
+          containerCustomStyle={{
+            position: 'absolute',
+            bottom: 0,
+            marginBottom: 30,
+          }}
+          renderItem={this.renderCarouse}
           sliderWidth={Dimensions.get('window').width}
           removeClippedSubviews={false}
           itemWidth={100}
-          onSnapToItem={index => this.onCarouselItemChange(index)}
+          onSnapToItem={index => this.carause_map(index)}
         />
       </>
     );
@@ -215,49 +208,4 @@ const styles = StyleSheet.create({
   textCenter: {
     textAlign: 'center',
   },
-  listCarousel: {
-    position: 'absolute',
-    alignSelf: 'center',
-    bottom: 0,
-    marginBottom: 170,
-    marginLeft: 20,
-  },
-  carousel: {
-    position: 'absolute',
-    bottom: 0,
-    marginBottom: 30,
-  },
-  cardContainer: {
-    alignSelf: 'center',
-    height: 70,
-    width: 70,
-    padding: 5,
-    borderRadius: 10,
-  },
-  cardContainerTitle: {
-    backgroundColor: 'rgba(90, 82, 165,1)',
-    height: 20,
-    width: 70,
-    top: 0,
-    position: 'absolute',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    alignSelf: 'center',
-    textAlign: 'center',
-    padding: 4,
-  },
-  cardTitle: {
-    color: '#fff',
-    fontSize: 10,
-  },
-  cardImage: {
-    height: 50,
-    width: 70,
-    bottom: 0,
-    position: 'absolute',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  modalMaps: {padding: 0, margin: 0},
-  btnBottom: {position: 'absolute', bottom: 0, width: '100%'},
 });

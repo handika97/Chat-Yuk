@@ -30,6 +30,8 @@ export default class Home extends React.Component {
       person: this.props.route.params.name,
       text: '',
       messageList: [],
+      e: '',
+      f: '',
     };
     this.keyboardHeight = new Animated.Value(0);
     this.bottomPadding = new Animated.Value(60);
@@ -92,49 +94,98 @@ export default class Home extends React.Component {
       });
   }
   componentDidMount() {
-    this.keyboardShowListener = Keyboard.addListener(
-      isIOS ? 'keyboardWillShow' : 'keyboardDidShow',
-      e => this.keyboardEvent(e, true),
-    );
-    this.keyboardHideListener = Keyboard.addListener(
-      isIOS ? 'keyboardWillHide' : 'keyboardDidHide',
-      e => this.keyboardEvent(e, false),
+    // this.keyboardShowListener = Keyboard.addListener(
+    //   isIOS ? 'keyboardWillShow' : 'keyboardDidShow',
+    //   e => this.keyboardEvent(e, true),
+    // );
+    // this.keyboardHideListener = Keyboard.addListener(
+    //   isIOS ? 'keyboardWillHide' : 'keyboardDidHide',
+    //   e => this.keyboardEvent(e, false),
+    // );
+    setTimeout(
+      function() {
+        this.scrollView.scrollToEnd();
+      }.bind(this),
     );
   }
   componentWillUnmount() {
-    this.keyboardShowListener.remove();
-    this.keyboardHideListener.remove();
+    // this.keyboardShowListener.remove();
+    // this.keyboardHideListener.remove();
   }
-  keyboardEvent = (e, isShow) => {
-    let heightOS = isIOS ? 60 : 0;
-    let bottomOS = isIOS ? 120 : 60;
-    Animated.parallel([
-      Animated.timing(this.keyboardHeight, {
-        duration: e.duration,
-        toValue: isShow ? heightOS : 0,
-      }),
-      Animated.timing(this.bottomPadding, {
-        duration: e.duration,
-        toValue: isShow ? bottomOS : 60,
-      }),
-    ]).start();
+  componentDidUpdate() {
+    setTimeout(
+      function() {
+        this.scrollView.scrollToEnd();
+      }.bind(this),
+    );
+  }
+  convertTime = time => {
+    let d = new Date(time);
+    let c = new Date();
+    // console.log(d.getDay(), d.getMonth(), d.getFullYear());
+    // console.log('ye', c.getDay(), c.getMonth(), c.getFullYear());
+    let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':';
+    result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+    if (c.getDay() !== d.getDay()) {
+      result = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear();
+    }
+    return result;
   };
+
+  // convertDate = time => {
+  //   let d = new Date(time);
+  //   let c = new Date();
+  //   let result = 'This Day';
+  //   // console.log(this.state.e);
+  //   if (c.getDay() !== d.getDay()) {
+  //     if (this.state.e === d.getDay()) {
+  //       result = null;
+  //     } else {
+  //       result = d.getDate() + ' ' + d.getMonth() + ' ' + d.getFullYear();
+  //       this.setState({
+  //         e: d.getDay(),
+  //       });
+  //     }
+  //   } else {
+  //     if (this.state.f === d.getDate()) {
+  //       result = null;
+  //     } else {
+  //       result = 'This Day';
+  //       this.setState({
+  //         f: d.getDate(),
+  //       });
+  //     }
+  //   }
+  //   console.log(result);
+  //   return result;
+  // };
+
+  // let e = d.getDay();
 
   render() {
     let {height, width} = Dimensions.get('window');
-    console.log('yes', this.props.route.params);
+    // console.log('yes', this.props.route.params);
     return (
       <SafeAreaView>
         <View
           style={{
             height: 70,
             width: '100%',
-            backgroundColor: '#FF6870',
+            backgroundColor: 'white',
             flexDirection: 'row',
             alignContent: 'center',
             justifyContent: 'center',
             position: 'absolute',
             zIndex: 20,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 11,
+            },
+            shadowOpacity: 0.57,
+            shadowRadius: 15.19,
+
+            elevation: 23,
           }}>
           <TouchableOpacity
             style={{height: 50, width: 50, marginLeft: width * -0.25}}
@@ -145,7 +196,7 @@ export default class Home extends React.Component {
             />
           </TouchableOpacity>
           <View style={{width: 200, height: 100, marginLeft: 10}}>
-            <Text style={{fontSize: 20, color: 'white', marginTop: 20}}>
+            <Text style={{fontSize: 20, color: 'black', marginTop: 20}}>
               {this.props.route.params.user2.name}
             </Text>
           </View>
@@ -154,32 +205,83 @@ export default class Home extends React.Component {
           resetScrollToCoords={{x: 0, y: 0}}
           scrollEnabled={false}>
           <ScrollView
+            ref={ref => {
+              this.scrollView = ref;
+            }}
             style={{
               height: height * 0.75,
               padding: 8,
               marginTop: height * 0.12,
-            }}
-            ref={ref => (this.flatList = ref)}
-            onContentSizeChange={() =>
-              this.flatList.scrollToEnd({animated: true})
-            }>
+              marginBottom: 1,
+            }}>
             {this.state.messageList.length !== 0
               ? this.state.messageList.map(message => {
                   return (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignSelf:
-                          message.from === this.props.route.params.user.name
-                            ? 'flex-end'
-                            : 'flex-start',
-                        backgroundColor: 'white',
-                        borderRadius: 7,
-                        marginBottom: 10,
-                      }}>
-                      <Text style={{color: 'black', padding: 7, fontSize: 25}}>
-                        {message.message}
-                      </Text>
+                    <View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignSelf:
+                            message.uidFrom === this.props.route.params.user.uid
+                              ? 'flex-end'
+                              : 'flex-start',
+
+                          marginBottom: 10,
+                        }}>
+                        {message.uidFrom ===
+                        this.props.route.params.user.uid ? (
+                          <Text
+                            style={{
+                              color: 'black',
+                              padding: 7,
+                              fontSize: 15,
+                              backgroundColor: '#03fcd7',
+                              borderRadius: 7,
+                              maxWidth: '70%',
+                            }}>
+                            {message.message}
+                            {'\n'}
+                            <Text
+                              style={{
+                                fontSize: 10,
+                                color: 'grey',
+                              }}>
+                              {this.convertTime(message.time)}
+                            </Text>
+                          </Text>
+                        ) : (
+                          <View style={{flexDirection: 'row'}}>
+                            <Image
+                              source={{
+                                uri: `${this.props.route.params.user2.avatar}`,
+                              }}
+                              style={{
+                                marginLeft: 0,
+                                alignSelf: 'center',
+                                borderRadius: 100,
+                                height: 40,
+                                width: 40,
+                              }}
+                            />
+                            <Text
+                              style={{
+                                color: 'black',
+                                padding: 7,
+                                marginLeft: 5,
+                                fontSize: 15,
+                                backgroundColor: '#dbfc03',
+                                borderRadius: 7,
+                                maxWidth: '70%',
+                              }}>
+                              {message.message}
+                              {'\n'}
+                              <Text style={{fontSize: 10, color: 'grey'}}>
+                                {this.convertTime(message.time)}
+                              </Text>
+                            </Text>
+                          </View>
+                        )}
+                      </View>
                     </View>
                   );
                 })
@@ -190,20 +292,22 @@ export default class Home extends React.Component {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginTop: 0,
+
               borderWidth: 2,
               borderRadius: 20,
               backgroundColor: 'white',
+              marginBottom: 10,
             }}>
             <TextInput
               onChangeText={text => this.setState({text: text})}
+              value={this.state.text}
               placeholder="Type message"
               style={{width: width * 0.84, fontSize: 20}}
             />
             <TouchableOpacity onPress={this.send}>
               <Image
                 source={require('../asset/send.png')}
-                style={{height: 50, width: 50}}
+                style={{height: 60, width: 60}}
               />
             </TouchableOpacity>
           </View>
@@ -224,6 +328,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
+
     //alignItems: 'center',
   },
   sectionTitle: {

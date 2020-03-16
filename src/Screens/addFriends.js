@@ -5,20 +5,16 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   Alert,
   Image,
-  BackHandler,
   Dimensions,
 } from 'react-native';
 import app from '../config/firebase';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-const db = app.firestore();
 import {ScrollView} from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
-//import {styles} from '../components/ListDataComp';
 
+let {height, width} = Dimensions.get('window');
 export default class friends extends React.Component {
   constructor(props) {
     super(props);
@@ -27,6 +23,7 @@ export default class friends extends React.Component {
       friendss: [],
       idUser_2: '',
       name: '',
+      keyword: '',
     };
   }
 
@@ -87,31 +84,7 @@ export default class friends extends React.Component {
       Alert.alert('Teman Sudah Di Tambahkan');
     }
   };
-  //-------------------------------------------------
-  // if (person.name === id.name) {
-  //   Alert.alert('Teman Sudah Di Tambahkan');
-  // } else {
-  // let msgId = firebase
-  //   .database()
-  //   .ref('friends')
-  //   .child(`${this.props.route.params.name}`)
-  //   .push().key;
-  // let updates = {};
-  // let friends = {
-  //   name: id.name,
-  //   email: id.email,
-  // };
-  // updates[
-  //   'friends/' + this.props.route.params.name + '/' + msgId
-  // ] = friends;
-  // firebase
-  //   .database()
-  //   .ref()
-  //   .update(updates);
-  //       Alert.alert('add friends');
-  //     }
-  //   });
-  // };
+
   componentWillUnmount() {
     // BackHandler.addEventListener('hardwareBackPress', function() {
     //   return false;
@@ -121,6 +94,9 @@ export default class friends extends React.Component {
     // BackHandler.addEventListener('hardwareBackPress', function() {
     //   return true;
     // });
+    this.getFriends();
+  }
+  getFriends = () => {
     let dbRef = firebase.database().ref('users');
     dbRef.on('child_added', val => {
       let person = val.val();
@@ -135,25 +111,36 @@ export default class friends extends React.Component {
         });
       }
     });
-  }
+  };
   componentDidMount() {
     this.addFriends();
   }
 
   render() {
-    let {height, width} = Dimensions.get('window');
-    console.log('ku', this.props);
-
+    let keyword = this.state.friends.filter(
+      friends =>
+        friends.name.toLowerCase().indexOf(this.state.keyword.toLowerCase()) ===
+        0,
+    );
     return (
       <View style={styles.container}>
         <View
           style={{
             height: 70,
             width: '100%',
-            backgroundColor: '#FF6870',
+            backgroundColor: 'white',
             flexDirection: 'row',
             alignContent: 'center',
             justifyContent: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 11,
+            },
+            shadowOpacity: 0.57,
+            shadowRadius: 15.19,
+
+            elevation: 23,
           }}>
           <TouchableOpacity
             style={{height: 50, width: 50, marginLeft: width * -0.15}}
@@ -163,22 +150,35 @@ export default class friends extends React.Component {
               style={{marginTop: 10, height: 50, width: 50}}
             />
           </TouchableOpacity>
-          <View style={{width: 200, height: 100, marginLeft: width * 0.1}}>
-            <Text style={{fontSize: 20, color: 'white', marginTop: 10}}>
-              Add Your Friends
-            </Text>
+          <View
+            style={{
+              display: 'flex',
+
+              alignItems: 'flex-start',
+            }}>
+            <TextInput
+              onChangeText={text => this.setState({keyword: text})}
+              style={{
+                fontSize: 20,
+                width: 200,
+                height: 50,
+                marginLeft: width * 0.1,
+                borderBottomWidth: 2,
+              }}
+              placeholder="Search Friends"
+              onKeyUp={this.getFriends}
+            />
           </View>
         </View>
         <ScrollView>
-          {this.state.friends.length !== 0
-            ? this.state.friends.map(friends => {
+          {this.state.keyword.length !== 0
+            ? keyword.map(friends => {
                 return (
                   <View
                     style={{
                       height: 100,
                       width: '100%',
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#3bb0ba',
+                      marginTop: 10,
                       flexDirection: 'row',
                       alignItems: 'center',
                     }}>
@@ -225,6 +225,7 @@ export default class friends extends React.Component {
                             style={{
                               height: 50,
                               width: 50,
+
                               marginLeft: width * 0.1,
                             }}
                           />
@@ -262,7 +263,7 @@ export default class friends extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#faf5e4',
+    backgroundColor: 'white',
   },
   nav: {
     height: 50,

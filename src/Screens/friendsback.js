@@ -98,7 +98,7 @@ export default class friends extends React.Component {
     });
   }
   componentDidMount = async () => {
-    // BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     setTimeout(() => {
       this.locateCurrentPosition();
     }, 5000);
@@ -118,19 +118,7 @@ export default class friends extends React.Component {
     console.log('yeea', this.props.route);
   };
   handleBackButton = () => {
-    // Alert.alert(
-    //   ' Exit From App ',
-    //   ' Do you want to exit From App ?',
-    //   [
-    //     {text: 'Yes', onPress: () => BackHandler.exitApp()},
-    //     {text: 'No', onPress: () => console.log('NO Pressed')},
-    //   ],
-    //   {cancelable: false},
-    // );
-
-    // Return true to enable back button over ride.
     BackHandler.exitApp();
-    // return true;
   };
   logout = async () => {
     try {

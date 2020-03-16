@@ -10,6 +10,7 @@ import {
   BackHandler,
   Image,
   Dimensions,
+  Button,
 } from 'react-native';
 import app from '../config/firebase';
 import * as firebase from 'firebase';
@@ -36,6 +37,8 @@ export default class friends extends React.Component {
       location: [],
       userLocation: [],
       user: [],
+      gender: '',
+      story: '',
     };
   }
 
@@ -50,6 +53,8 @@ export default class friends extends React.Component {
       if (person.uid === id.uid) {
         this.setState({
           name: person.name,
+          gender: person.gender,
+          story: person.story,
         });
 
         this.props.navigation.navigate('Home', {
@@ -165,6 +170,21 @@ export default class friends extends React.Component {
         });
     });
   };
+  getUser = () => {
+    setTimeout(() => this.getLocation(), 2000);
+    let dbRef = firebase.database().ref('users');
+    dbRef.on('child_added', val => {
+      let person = val.val();
+      //person.email = val.key;
+
+      if (person.uid === this.props.route.params.uid) {
+        this.setState({
+          name: person.name,
+          user: person,
+        });
+      }
+    });
+  };
 
   getLocation = () => {
     this.setState({location: []});
@@ -215,6 +235,20 @@ export default class friends extends React.Component {
   //     //
   //   }
   // };
+  updateUsers = () => {
+    firebase
+      .database()
+      .ref('users/' + this.props.route.params.uid)
+      .update({
+        name: this.state.name,
+        gender: this.state.gender,
+        story: this.state.story,
+      });
+    this.setState({
+      visible: false,
+    });
+    this.getUser();
+  };
   myfriends = () => {
     this.setState({friends: []});
     for (let i = 0; i < this.state.friendss.length; i++) {
@@ -251,45 +285,29 @@ export default class friends extends React.Component {
           style={{
             height: 70,
             width: '100%',
-            backgroundColor: '#FF6870',
+            backgroundColor: 'white',
             flexDirection: 'row',
-            alignContent: 'center',
-            justifyContent: 'center',
+            display: 'flex',
+            // justifyContent: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 11,
+            },
+            shadowOpacity: 0.57,
+            shadowRadius: 15.19,
+
+            elevation: 7,
           }}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('addFriends', {
-                name: this.state.name,
-                email: this.state.email,
-                uid: this.props.route.params.uid,
-              })
-            }>
-            <Image
-              source={{
-                uri:
-                  'https://cdn2.iconfinder.com/data/icons/jetflat-faces/90/005_027_friend_add_like_subscribe_user_human_avatar-512.png',
-              }}
-              style={{marginTop: 10, height: 50, width: 50, marginLeft: 0}}
-            />
-          </TouchableOpacity>
           <Image
             source={require('../asset/logo.png')}
-            style={{marginTop: -20, height: 120, width: 120, marginLeft: 60}}
+            style={{
+              marginTop: -20,
+              height: 100,
+              width: 100,
+              alignSelf: 'flex-start',
+            }}
           />
-          <TouchableOpacity onPress={() => this.logout()}>
-            <Image
-              source={{
-                uri:
-                  'https://cdn0.iconfinder.com/data/icons/2-colors-superthick/128/exit-door-log-out-512.png',
-              }}
-              style={{
-                marginTop: 10,
-                height: 50,
-                width: 50,
-                marginLeft: 70,
-              }}
-            />
-          </TouchableOpacity>
         </View>
         <ScrollView>
           {this.state.friendss.length !== 0
@@ -298,7 +316,7 @@ export default class friends extends React.Component {
                   return friend.uid === friendss.uid ? (
                     <View
                       style={{
-                        height: 100,
+                        height: 70,
                         width: '100%',
                         borderWidth: 1,
                         marginTop: 20,
@@ -309,16 +327,16 @@ export default class friends extends React.Component {
                         backgroundColor: 'white',
                         borderTopLeftRadius: 50,
                         borderBottomLeftRadius: 50,
-                        elevation: 7,
+                        elevation: 3,
                       }}>
                       <TouchableOpacity
                         onPress={() => this.sendLocation(friendss.name)}>
                         <View
                           style={{
                             marginLeft: 10,
-                            height: 80,
+                            height: 50,
 
-                            width: 80,
+                            width: 50,
                             borderRadius: 100,
                             borderBottomColor: '#3bb0ba',
                           }}>
@@ -337,26 +355,40 @@ export default class friends extends React.Component {
                         </View>
                       </TouchableOpacity>
                       <View>
-                        <TouchableOpacity
-                          onPress={
-                            () => this.addChat(friendss)
-                            // this.props.navigation.navigate('Home', friends)
-                          }
-                          style={{
-                            height: 100,
-                            width: 200,
-                            alignContent: 'center',
-                            justifyContent: 'center',
-                          }}>
+                        <View>
+                          <TouchableOpacity
+                            onPress={
+                              () => this.addChat(friendss)
+                              // this.props.navigation.navigate('Home', friends)
+                            }
+                            style={{
+                              height: 100,
+                              width: 200,
+                              alignContent: 'center',
+                              justifyContent: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                marginLeft: 20,
+                                marginTop: -35,
+                                alignSelf: 'center',
+                              }}>
+                              {friendss.name}
+                            </Text>
+                          </TouchableOpacity>
+
                           <Text
                             style={{
-                              fontSize: 20,
+                              fontSize: 13,
                               marginLeft: 20,
+                              color: 'grey',
                               alignSelf: 'center',
+                              marginTop: -50,
                             }}>
-                            {friendss.name}
+                            #{friendss.story}
                           </Text>
-                        </TouchableOpacity>
+                        </View>
                       </View>
                       {friendss.status === 1 ? (
                         <View
@@ -364,6 +396,7 @@ export default class friends extends React.Component {
                             height: 10,
                             width: 10,
                             borderRadius: 20,
+
                             backgroundColor: 'green',
                           }}
                         />
@@ -386,16 +419,34 @@ export default class friends extends React.Component {
         </ScrollView>
         <View
           style={{
-            height: 70,
+            height: 50,
             width: '100%',
-            flexDirection: 'row',
-            alignContent: 'center',
-            justifyContent: 'center',
+            // flexDirection: 'row',
+            display: 'flex',
           }}>
-          <TouchableOpacity onPress={() => this.setState({visible: true})}>
+          <TouchableOpacity
+            onPress={() => this.setState({visible: true})}
+            style={{alignSelf: 'center'}}>
             <Image
               source={require('../asset/profile.png')}
-              style={{height: 50, width: 50, marginLeft: 0}}
+              style={{height: 50, width: 50}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate('addFriends', {
+                name: this.state.name,
+                email: this.state.email,
+                uid: this.props.route.params.uid,
+              })
+            }
+            style={{alignSelf: 'flex-end', marginTop: -51}}>
+            <Image
+              source={{
+                uri:
+                  'https://cdn2.iconfinder.com/data/icons/jetflat-faces/90/005_027_friend_add_like_subscribe_user_human_avatar-512.png',
+              }}
+              style={{height: 50, width: 50}}
             />
           </TouchableOpacity>
         </View>
@@ -409,17 +460,18 @@ export default class friends extends React.Component {
           onTouchOutside={event => {
             this.setState({visible: false});
           }}
-          style={{marginTop: 150}}>
+          style={{marginTop: 80}}>
           <ModalContent>
             <View
               style={{
                 width: width,
                 backgroundColor: 'white',
                 height: '100%',
+                display: 'flex',
               }}>
               <View
                 style={{
-                  marginTop: 30,
+                  marginTop: 10,
                   height: 100,
                   width: 100,
                   marginLeft: 0,
@@ -434,64 +486,122 @@ export default class friends extends React.Component {
                     width: '100%',
                     marginLeft: 0,
                     alignSelf: 'center',
+                    borderRadius: 10,
                   }}
                 />
               </View>
-              <View>
-                <Text
-                  style={{alignSelf: 'center', fontSize: 30, marginTop: 30}}>
-                  {this.state.user.name}
-                </Text>
-              </View>
-              <View>
-                <Text
-                  style={{alignSelf: 'center', fontSize: 25, marginTop: 30}}>
-                  {this.state.user.email}
-                </Text>
-              </View>
-              {/* <View
+              <TouchableOpacity
+                onPress={() => {
+                  this.logout(), this.setState({visible: false});
+                }}
                 style={{
-                  flexDirection: 'row',
-                  height: '10%',
-                  width: '100%',
-                  marginLeft: 22,
+                  alignSelf: 'flex-end',
+                  marginTop: -120,
                 }}>
-                <TextInput
+                <View>
+                  <Image
+                    source={{
+                      uri:
+                        'https://cdn0.iconfinder.com/data/icons/2-colors-superthick/128/exit-door-log-out-512.png',
+                    }}
+                    style={{
+                      height: 60,
+                      width: 60,
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+              <View style={{display: 'flex'}}>
+                <View
                   style={{
-                    height: 60,
-                    width: 200,
-                    fontSize: 20,
-
+                    width: 300,
+                    marginTop: 70,
+                    marginLeft: 10,
                     borderBottomWidth: 2,
-                  }}
-                  placeholder=" Share Your Story"
-                  selectionColor="#428AF8"
-                  name="name"
-                  value={this.state.status}
-                  onChangeText={text => this.setState({status: text})}
-                />
-                <TouchableOpacity onPress={() => this.handleUpdate()}>
+                    alignSelf: 'center',
+                  }}>
+                  <TextInput
+                    type="text"
+                    onChangeText={text => this.setState({name: text})}
+                    style={{
+                      fontSize: 20,
+                    }}>
+                    {this.state.user.name}
+                  </TextInput>
+                </View>
+                <View
+                  style={{
+                    width: 300,
+                    marginTop: 10,
+                    marginLeft: 10,
+                    borderBottomWidth: 2,
+                    alignSelf: 'center',
+                  }}>
+                  <TextInput
+                    type="text"
+                    onChangeText={text => this.setState({email: text})}
+                    style={{
+                      fontSize: 20,
+                    }}
+                    editable={false}>
+                    {this.state.user.email}
+                  </TextInput>
+                </View>
+                <View
+                  style={{
+                    width: 300,
+                    marginTop: 10,
+                    marginLeft: 10,
+                    borderBottomWidth: 2,
+                    alignSelf: 'center',
+                  }}>
+                  <TextInput
+                    type="text"
+                    placeholder="Gender"
+                    onChangeText={text => this.setState({gender: text})}
+                    style={{
+                      fontSize: 20,
+                    }}>
+                    {this.state.user.gender}
+                  </TextInput>
+                </View>
+                <View
+                  style={{
+                    width: 300,
+                    marginTop: 10,
+                    marginLeft: 10,
+                    borderBottomWidth: 2,
+                    alignSelf: 'center',
+                  }}>
+                  <TextInput
+                    type="text"
+                    placeholder="write your story"
+                    onChangeText={text => this.setState({story: text})}
+                    style={{
+                      fontSize: 20,
+                    }}>
+                    {this.state.user.story}
+                  </TextInput>
+                </View>
+              </View>
+              <View style={{display: 'flex'}}>
+                <TouchableOpacity onPress={() => this.updateUsers()}>
                   <View
                     style={{
-                      marginLeft: 20,
-                      width: 80,
-                      height: 40,
+                      height: 30,
+                      width: 70,
+                      backgroundColor: '#2196F3',
+                      marginTop: 20,
                       justifyContent: 'center',
-                      alignItems: 'center',
-                      borderWidth: 1,
-                      backgroundColor: 'grey',
-                      marginTop: 17,
-                      borderRadius: 10,
+                      alignSelf: 'center',
                     }}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                      }}>
-                      Share
-                    </Text>
+                    <Text style={{alignSelf: 'center'}}>Update</Text>
                   </View>
                 </TouchableOpacity>
-              </View> */}
+                <Text style={{alignSelf: 'center', marginTop: 5}}>
+                  Scroll Down To Closed Without Edit
+                </Text>
+              </View>
             </View>
           </ModalContent>
         </Modal>
@@ -503,7 +613,7 @@ export default class friends extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#faf5e4',
+    backgroundColor: 'white',
   },
   nav: {
     height: 50,

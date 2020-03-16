@@ -43,7 +43,7 @@ export default class login extends React.Component {
       name: this.state.ImageUpload.fileName,
     });
 
-    axios.post('http://54.234.60.110:4006/api/v1/image/', dataFile);
+    axios.post('http://54.161.74.26:4006/api/v1/image/', dataFile);
 
     await firebase
       .auth()
@@ -59,7 +59,7 @@ export default class login extends React.Component {
             name: `${this.state.name}`,
             uid: res.user.uid,
             status: 1,
-            avatar: `http://54.234.60.110:4006/upload/${this.state.ImageUpload.fileName}`,
+            avatar: `http://54.161.74.26:4006/upload/${this.state.ImageUpload.fileName}`,
           });
         firebase
           .database()

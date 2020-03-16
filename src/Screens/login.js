@@ -8,6 +8,7 @@ import {
   ImageBackground,
   Image,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import app from '../config/firebase';
 import 'firebase/firestore';
@@ -15,6 +16,7 @@ import * as firebase from 'firebase';
 import {AuthContext} from '../context/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 const db = app.firestore();
+let {height, width} = Dimensions.get('window');
 export default class login extends React.Component {
   constructor(props) {
     super(props);
@@ -115,19 +117,7 @@ export default class login extends React.Component {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
   handleBackButton = () => {
-    // Alert.alert(
-    //   ' Exit From App ',
-    //   ' Do you want to exit From App ?',
-    //   [
-    //     {text: 'Yes', onPress: () => BackHandler.exitApp()},
-    //     {text: 'No', onPress: () => console.log('NO Pressed')},
-    //   ],
-    //   {cancelable: false},
-    // );
-
-    // Return true to enable back button over ride.
     BackHandler.exitApp();
-    // return true;
   };
   render() {
     return (
@@ -236,14 +226,14 @@ const styles = StyleSheet.create({
   },
   //--------------------------------------LOGIN-----------------------------------------------------
   sectionForm: {
-    width: 360,
-    height: 200,
-    backgroundColor: 'rgba(255, 255,255,0.2)',
+    width: '100%',
+    height: height / 2.96,
+    backgroundColor: 'rgba(255, 255,255, 1)',
     borderRadius: 25,
     paddingHorizontal: 10,
     fontSize: 16,
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: height / 11.84,
     color: '#ffffff',
     marginVertical: 30,
     borderColor: 'white',
@@ -270,9 +260,9 @@ const styles = StyleSheet.create({
     fontWeight: '100',
   },
   button: {
-    width: 100,
+    width: width / 3.6,
     //backgroundColor: 'rgba(255, 255,255,0.2)',
-    height: 50,
+    height: height / 11.9,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',

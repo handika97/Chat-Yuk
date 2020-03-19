@@ -61,6 +61,8 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="a6a39f" />
                                       <entry key="foregroundImage" value="D:\frontend\baru\baru\ReactNative-Chat-Maps\src\asset\logo.png" />
                                     </map>
                                   </option>

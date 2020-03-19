@@ -56,13 +56,13 @@ export default class friends extends React.Component {
       //person.email = val.key;
 
       if (person.email === email) {
-        this.setState({
-          name: person.name,
-        });
+        // this.setState({
+        //   name: person.name,
+        // });
 
         this.props.navigation.navigate('Home', {
           user2: id,
-          user: this.state.name,
+          user: person.name,
         });
       } else {
         // this.setState(prevState => {

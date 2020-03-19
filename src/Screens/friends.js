@@ -11,16 +11,18 @@ import {
   Image,
   Dimensions,
   Button,
+  Modal,
 } from 'react-native';
 import app from '../config/firebase';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 const db = app.firestore();
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ScrollView} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 //import {styles} from '../components/ListDataComp';
 import Geolocation from '@react-native-community/geolocation';
-import Modal, {ModalContent} from 'react-native-modals';
+// import Modal, {ModalContent} from 'react-native-modals';
 
 export default class friends extends React.Component {
   constructor(props) {
@@ -52,9 +54,9 @@ export default class friends extends React.Component {
 
       if (person.uid === id.uid) {
         this.setState({
-          name: person.name,
-          gender: person.gender,
-          story: person.story,
+          // name: person.name,
+          // gender: person.gender,
+          // story: person.story,
         });
 
         this.props.navigation.navigate('Home', {
@@ -129,6 +131,8 @@ export default class friends extends React.Component {
       if (person.uid === this.props.route.params.uid) {
         this.setState({
           name: person.name,
+          gender: person.gender,
+          story: person.story,
           user: person,
         });
       }
@@ -450,18 +454,12 @@ export default class friends extends React.Component {
             />
           </TouchableOpacity>
         </View>
-        <Modal
-          visible={this.state.visible}
-          swipeDirection={['up', 'down']} // can be string or an array
-          swipeThreshold={200} // default 100
-          onSwipeOut={event => {
-            this.setState({visible: false});
-          }}
-          onTouchOutside={event => {
-            this.setState({visible: false});
-          }}
-          style={{marginTop: 80}}>
-          <ModalContent>
+
+        <Modal visible={this.state.visible}>
+          {/* <ModalContent> */}
+          <KeyboardAwareScrollView
+            resetScrollToCoords={{x: 0, y: 0}}
+            scrollEnabled={false}>
             <View
               style={{
                 width: width,
@@ -469,6 +467,34 @@ export default class friends extends React.Component {
                 height: '100%',
                 display: 'flex',
               }}>
+              <View
+                style={{
+                  height: 70,
+                  width: '100%',
+                  backgroundColor: 'white',
+                  flexDirection: 'row',
+                  display: 'flex',
+                  // justifyContent: 'center',
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 11,
+                  },
+                  shadowOpacity: 0.57,
+                  shadowRadius: 15.19,
+
+                  elevation: 7,
+                }}>
+                <Image
+                  source={require('../asset/logo.png')}
+                  style={{
+                    marginTop: -20,
+                    height: 100,
+                    width: 100,
+                    alignSelf: 'flex-start',
+                  }}
+                />
+              </View>
               <View
                 style={{
                   marginTop: 10,
@@ -495,8 +521,8 @@ export default class friends extends React.Component {
                   this.logout(), this.setState({visible: false});
                 }}
                 style={{
-                  alignSelf: 'flex-end',
-                  marginTop: -120,
+                  marginTop: -110,
+                  marginLeft: 250,
                 }}>
                 <View>
                   <Image
@@ -511,6 +537,7 @@ export default class friends extends React.Component {
                   />
                 </View>
               </TouchableOpacity>
+
               <View style={{display: 'flex'}}>
                 <View
                   style={{
@@ -584,6 +611,7 @@ export default class friends extends React.Component {
                   </TextInput>
                 </View>
               </View>
+
               <View style={{display: 'flex'}}>
                 <TouchableOpacity onPress={() => this.updateUsers()}>
                   <View
@@ -598,12 +626,26 @@ export default class friends extends React.Component {
                     <Text style={{alignSelf: 'center'}}>Update</Text>
                   </View>
                 </TouchableOpacity>
-                <Text style={{alignSelf: 'center', marginTop: 5}}>
-                  Scroll Down To Closed Without Edit
-                </Text>
+                <TouchableOpacity
+                  onPress={() => this.setState({visible: false})}>
+                  <View
+                    style={{
+                      height: 50,
+                      width: 50,
+                      marginTop: 35,
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                    }}>
+                    <Image
+                      source={require('../asset/profile.png')}
+                      style={{height: '100%', width: '100%'}}
+                    />
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
-          </ModalContent>
+          </KeyboardAwareScrollView>
+          {/* </ModalContent> */}
         </Modal>
       </View>
     );

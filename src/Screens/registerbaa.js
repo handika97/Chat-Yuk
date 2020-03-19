@@ -14,7 +14,6 @@ import {AuthContext} from '../context/auth';
 import ImagePicker from 'react-native-image-picker';
 import app from '../config/firebase';
 import * as firebase from 'firebase';
-
 import AsyncStorage from '@react-native-community/async-storage';
 const db = app.firestore();
 import axios from 'axios';
@@ -35,67 +34,75 @@ export default class login extends React.Component {
   }
 
   onSubmitButton = async () => {
-    const dataFile = new FormData();
-    console.log(this.state.ImageUpload.fileName);
-    dataFile.append('image', {
-      uri: this.state.ImageUpload.uri,
-      type: 'image/jpeg',
-      name: this.state.ImageUpload.fileName,
-    });
+    try {
+      const dataFile = new FormData();
+      console.log(this.state.ImageUpload.fileName);
+      dataFile.append('image', {
+        uri: this.state.ImageUpload.uri,
+        type: 'image/jpeg',
+        name: this.state.ImageUpload.fileName,
+      });
 
-    axios.post('http://54.161.74.26:4006/api/v1/image/', dataFile);
+      axios.post('http://54.161.74.26:4006/api/v1/image/', dataFile);
 
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(res => {
-        let email = this.state.email;
-        firebase
-          .database()
-          .ref('users/' + res.user.uid)
-          .set({
-            password: this.state.password,
-            email: this.state.email,
-            name: `${this.state.name}`,
-            uid: res.user.uid,
-            status: 1,
-            avatar: `http://54.161.74.26:4006/upload/${this.state.ImageUpload.fileName}`,
-          });
-        firebase
-          .database()
-          .ref('friends/' + res.user.uid)
-          .set([
-            {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(res => {
+          let email = this.state.email;
+          console.log(res);
+          firebase
+            .database()
+            .ref('users/' + res.user.uid)
+            .set({
               password: this.state.password,
               email: this.state.email,
               name: `${this.state.name}`,
               uid: res.user.uid,
-            },
-          ]);
-        firebase
-          .database()
-          .ref('location/' + res.user.uid)
-          .set({
-            latitude: 0,
-            longitude: 0,
-          });
-        this.props.navigation.navigate('friends', {
-          email: this.state.email,
-          name: this.state.name,
-          uid: res.user.uid,
-        });
-        const _storeData = async () => {
-          try {
-            await AsyncStorage.setItem('email', `${this.state.email}`);
-            await AsyncStorage.setItem('uid', `${res.user.uid}`);
-          } catch (e) {
-            e;
-          }
-        };
+              status: 1,
+              avatar: `http://54.161.74.26:4006/upload/${this.state.ImageUpload.fileName}`,
+            });
 
-        _storeData();
-      })
-      .catch(err => console.log(err));
+          firebase
+            .database()
+            .ref('friends/' + res.user.uid)
+            .set([
+              {
+                password: this.state.password,
+                email: this.state.email,
+                name: `${this.state.name}`,
+                uid: res.user.uid,
+              },
+            ]);
+          firebase
+            .database()
+            .ref('location/' + res.user.uid)
+            .set({
+              latitude: 0,
+              longitude: 0,
+            });
+          this.props.navigation.navigate('friends', {
+            email: this.state.email,
+            name: this.state.name,
+            uid: res.user.uid,
+          });
+          const _storeData = async () => {
+            try {
+              await AsyncStorage.setItem('email', `${this.state.email}`);
+              await AsyncStorage.setItem('uid', `${res.user.uid}`);
+            } catch (e) {
+              e;
+            }
+          };
+
+          _storeData();
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+    } catch (err) {
+      alert('Please Upload Your Avatar');
+    }
   };
 
   handleChoosePhoto = () => {
@@ -126,23 +133,6 @@ export default class login extends React.Component {
       // }
     });
   };
-
-  // uploadFile(file) {
-  //   return RNFetchBlob.fetch(
-  //     'POST',
-  //     'https://api.cloudinary.com/v1_1/chat-yuk/image/upload',
-  //     {
-  //       'Content-Type': 'multipart/form-data',
-  //     },
-  //     [
-  //       {
-  //         name: 'file',
-  //         filename: file.fileName,
-  //         data: RNFetchBlob.wrap(file.origURL),
-  //       },
-  //     ],
-  //   );
-  // }
 
   render() {
     return (
@@ -177,7 +167,7 @@ export default class login extends React.Component {
             />
             <TextInput
               style={[styles.input, styles.username]}
-              placeholder="Username"
+              placeholder="Email"
               selectionColor="#428AF8"
               name="name"
               value={this.state.email}
@@ -198,18 +188,38 @@ export default class login extends React.Component {
               <Text
                 style={{
                   fontSize: 18,
-                  marginTop: 10,
-                  marginLeft: 5,
+
+                  marginLeft: 50,
                 }}>
-                Upload Image
+                Press me for upload your avatar
               </Text>
             </View>
           </TouchableOpacity>
-          <Image
-            source={{uri: this.state.avatarSource}}
-            style={{height: 100, width: 100}}
-          />
-
+          <View>
+            {this.state.avatarSource === null ? (
+              <TouchableOpacity onPress={() => this.handleChoosePhoto()}>
+                <Image
+                  source={require('../asset/avatar.png')}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    marginLeft: 130,
+                    borderRadius: 10,
+                  }}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Image
+                source={{uri: this.state.avatarSource}}
+                style={{
+                  height: 100,
+                  width: 100,
+                  marginLeft: 130,
+                  borderRadius: 10,
+                }}
+              />
+            )}
+          </View>
           {this.state.email.length >= 5 && this.state.password.length >= 5 ? (
             <View style={styles.sectionButton}>
               <TouchableOpacity
@@ -266,7 +276,7 @@ const styles = StyleSheet.create({
   sectionForm: {
     width: 360,
     height: 200,
-    backgroundColor: 'rgba(255, 255,255,0.2)',
+    backgroundColor: 'rgba(255, 255,255,1)',
     borderRadius: 25,
     paddingHorizontal: 10,
     fontSize: 16,

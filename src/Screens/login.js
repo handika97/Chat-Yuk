@@ -9,6 +9,7 @@ import {
   Image,
   BackHandler,
   Dimensions,
+  Alert,
 } from 'react-native';
 import app from '../config/firebase';
 import 'firebase/firestore';
@@ -32,57 +33,64 @@ export default class login extends React.Component {
     };
   }
   onSubmitButton = async () => {
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() => {
-        let dbRef = firebase.database().ref('users');
-        dbRef.on('child_added', value => {
-          let person = value.val();
-          //person.email = val.key;
-          if (person.email === this.state.email) {
-            firebase
-              .database()
-              .ref('users/' + person.uid)
-              .update({
-                status: 1,
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(res => {
+          console.log(res);
+          let dbRef = firebase.database().ref('users');
+          dbRef.on('child_added', value => {
+            let person = value.val();
+            //person.email = val.key;
+            if (person.email === this.state.email) {
+              firebase
+                .database()
+                .ref('users/' + person.uid)
+                .update({
+                  status: 1,
+                });
+              this.setState({
+                uid: person.uid,
               });
-            this.setState({
-              uid: person.uid,
-            });
 
-            this.props.navigation.navigate('friends', {
-              email: person.email,
-              uid: person.uid,
-              name: person.name,
-            });
-          }
+              this.props.navigation.navigate('friends', {
+                email: person.email,
+                uid: person.uid,
+                name: person.name,
+              });
+            }
+          });
+          // app.firestore();
+          // db.collection('Users')
+          //   .doc()
+          //   .set({
+          //     email: `${this.state.email}`,
+          //     password: `${this.state.password}`,
+          //   });
+          const _storeData = async () => {
+            try {
+              await AsyncStorage.setItem('email', `${this.state.email}`);
+              await AsyncStorage.setItem('uid', `${this.state.uid}`);
+            } catch (e) {
+              e;
+            }
+          };
+
+          _storeData();
+        })
+        // .then(() => {
+        // this.props.navigation.navigate('friends', {
+        //   email: this.state.email,
+        //   name: this.state.name,
+        // });
+        // });
+        .catch(error => {
+          Alert.alert(error.message);
         });
-        // app.firestore();
-        // db.collection('Users')
-        //   .doc()
-        //   .set({
-        //     email: `${this.state.email}`,
-        //     password: `${this.state.password}`,
-        //   });
-        const _storeData = async () => {
-          try {
-            await AsyncStorage.setItem('email', `${this.state.email}`);
-            await AsyncStorage.setItem('uid', `${this.state.uid}`);
-          } catch (e) {
-            e;
-          }
-        };
-
-        _storeData();
-      });
-    // .then(() => {
-    // this.props.navigation.navigate('friends', {
-    //   email: this.state.email,
-    //   name: this.state.name,
-    // });
-    // });
-    // .catch(Alert.alert('error'));
+    } catch (err) {
+      Alert.alert(err);
+    }
   };
   componentDidMount = async () => {
     await AsyncStorage.getItem('email')

@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/ReactNative-v0.61.5-informational">
-  <img src="http://img.shields.io/npm/v/nativescript-plugin-firebase.svg">
+  <img src="https://img.shields.io/badge/Firebase-Realtime-orange">
   <img src="https://img.shields.io/badge/Node.js-v12.14.1-success">
   <img src="https://img.shields.io/badge/Axios-v0.19.2-orange">
 </p>
@@ -31,11 +31,11 @@ Chat Yuk!!! ss a social mobile application for communicating with features such 
 ## Demo
 
 <p align="center">
- <img src="https://github.com/handika97/Chat-Yuk/tree/master/src/asset/login-ss.gif" />
- <img src="https://github.com/handika97/Chat-Yuk/tree/master/src/asset/update-ss.gif" />
- <img src="https://github.com/handika97/Chat-Yuk/tree/master/src/asset/chat-ss.gif" />
- <img src="https://github.com/handika97/Chat-Yuk/tree/master/src/asset/friend-ss.gif" />
- <img src="https://github.com/handika97/Chat-Yuk/tree/master/src/asset/map-ss.gif" />
+ <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/login-ss.gif" />
+ <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/update-ss.gif" />
+ <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/chat-ss.gif" />
+ <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/friend-ss.gif" />
+ <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/map-ss.gif" />
 </p>
 
 ## How To Install

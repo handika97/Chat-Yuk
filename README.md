@@ -19,7 +19,7 @@
 
 ## Introduction
 
-Chat Yuk!!! ss a social mobile application for communicating with features such as real-time chat, find out the last position of a friend and update your status. This app was created using React Native, Firebase and Node JS. The main features are:
+Chat Yuk!!! is a social mobile application for communicating with features such as real-time chat, find out the last position of a friend and update your status. This app was created using React Native, Firebase and Node JS. The main features are:
 
 - Login and Register.
 - Search and Add Friend.
@@ -66,7 +66,7 @@ Chat Yuk!!! ss a social mobile application for communicating with features such 
    ```
 3. Run Debug
    ```
-   $ npm react-native run-android
+   $ npx react-native run-android
    ```
 
 ## Release APK

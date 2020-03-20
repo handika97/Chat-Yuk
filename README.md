@@ -8,7 +8,6 @@
   <img src="https://img.shields.io/badge/ReactNative-v0.61.5-informational">
   <img src="https://img.shields.io/badge/Firebase-Realtime-orange">
   <img src="https://img.shields.io/badge/Node.js-v12.14.1-success">
-  <img src="https://img.shields.io/badge/Axios-v0.19.2-orange">
 </p>
 
 ## Table of Contents
@@ -31,11 +30,27 @@ Chat Yuk!!! ss a social mobile application for communicating with features such 
 ## Demo
 
 <p align="center">
+<br>
  <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/login-ss.gif" />
+ <br>
+ Login Feature
+ <br>
  <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/update-ss.gif" />
+ <br>
+ Update Feature
+ <br>
  <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/chat-ss.gif" />
+ <br>
+ Chat Feature
+ <br>
  <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/friend-ss.gif" />
+ <br>
+ Search and Add Friend Feature
+ <br>
  <img src="https://github.com/handika97/Chat-Yuk/raw/master/src/asset/map-ss.gif" />
+ <br>
+ Maps Feature
+ <br>
 </p>
 
 ## How To Install

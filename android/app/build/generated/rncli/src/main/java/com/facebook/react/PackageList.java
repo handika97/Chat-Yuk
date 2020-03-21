@@ -26,6 +26,8 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.imagepicker.ImagePickerPackage;
 // react-native-maps
 import com.airbnb.android.react.maps.MapsPackage;
+// react-native-onesignal
+import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 // react-native-permissions
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 // react-native-reanimated
@@ -85,6 +87,7 @@ public class PackageList {
       new RNGestureHandlerPackage(),
       new ImagePickerPackage(),
       new MapsPackage(),
+      new ReactNativeOneSignalPackage(),
       new RNPermissionsPackage(),
       new ReanimatedPackage(),
       new SafeAreaContextPackage(),

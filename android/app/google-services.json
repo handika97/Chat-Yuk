@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "740732876051",
+    "firebase_url": "https://western-figure-270302.firebaseio.com",
+    "project_id": "western-figure-270302",
+    "storage_bucket": "western-figure-270302.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740732876051:android:0df3b9922fc4d502d3d6e6",
+        "android_client_info": {
+          "package_name": "Live_Chat.Arkademy.B14"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "740732876051-1qse5ru0qr6c5i7pb7nla4in82l38lon.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAFcS4U9Pldt2LFpjXNwVKRoOGpBzbIoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "740732876051-1qse5ru0qr6c5i7pb7nla4in82l38lon.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

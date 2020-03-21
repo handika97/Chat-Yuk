@@ -23,7 +23,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 //import {styles} from '../components/ListDataComp';
 import Geolocation from '@react-native-community/geolocation';
 // import Modal, {ModalContent} from 'react-native-modals';
-
+import OneSignal from 'react-native-onesignal';
 export default class friends extends React.Component {
   constructor(props) {
     super(props);
@@ -42,7 +42,28 @@ export default class friends extends React.Component {
       gender: '',
       story: '',
     };
+    OneSignal.init('a464b459-cadf-4ccd-a3ce-c670ff2b3e52');
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.configure();
   }
+
+  onReceived = notification => {
+    console.log('Notification received: ', notification);
+  };
+
+  onOpened = openResult => {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  };
+
+  onIds = device => {
+    console.log('Device info: ', device);
+    this.setState({device});
+  };
 
   addChat = async id => {
     let email = await AsyncStorage.getItem('email');

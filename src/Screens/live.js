@@ -22,6 +22,9 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import friends from './friends';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 //const db = app.firestore();
+import Axios from 'axios';
+import OneSignal from 'react-native-onesignal';
+
 const isIOS = Platform.OS === 'ios';
 export default class Home extends React.Component {
   constructor(props) {
@@ -35,6 +38,11 @@ export default class Home extends React.Component {
     };
     this.keyboardHeight = new Animated.Value(0);
     this.bottomPadding = new Animated.Value(60);
+    OneSignal.init(process.env.onesignal_key);
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.configure();
   }
 
   send = async () => {
@@ -74,7 +82,41 @@ export default class Home extends React.Component {
         .ref()
         .update(updates);
       this.setState({text: ''});
+      console.log(this.state.text);
+      let headers = {
+        'Content-Type': 'application/json',
+        Authorization:
+          "Basic 'MmZhNDVkYTAtMWI0Yi00NjQ1LTg4MjUtNjcxNWY3Y2VjNzgz'",
+      };
+
+      let endpoint = 'https://onesignal.com/api/v1/notifications';
+
+      let body = JSON.stringify({
+        app_id: 'a464b459-cadf-4ccd-a3ce-c670ff2b3e52',
+        include_player_ids: ['e8e5f386-8b58-426b-8220-482d66c19f53'],
+        contents: {en: message.message},
+      });
+      let config = {
+        headers,
+      };
+
+      await Axios.post(endpoint, body, config).then(res => console.log(res));
     }
+  };
+  onReceived = notification => {
+    console.log('Notification received: ', notification);
+  };
+
+  onOpened = openResult => {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  };
+
+  onIds = device => {
+    console.log('Device info: ', device);
+    this.setState({device});
   };
   UNSAFE_componentWillMount() {
     firebase
@@ -94,14 +136,6 @@ export default class Home extends React.Component {
       });
   }
   componentDidMount() {
-    // this.keyboardShowListener = Keyboard.addListener(
-    //   isIOS ? 'keyboardWillShow' : 'keyboardDidShow',
-    //   e => this.keyboardEvent(e, true),
-    // );
-    // this.keyboardHideListener = Keyboard.addListener(
-    //   isIOS ? 'keyboardWillHide' : 'keyboardDidHide',
-    //   e => this.keyboardEvent(e, false),
-    // );
     setTimeout(
       function() {
         this.scrollView.scrollToEnd();

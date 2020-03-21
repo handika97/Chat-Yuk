@@ -1,4 +1,0 @@
-#Thu Mar 19 19:20:16 ICT 2020
-base.0=D\:\\frontend\\baru\\ReactNative-Chat-Maps\\android\\app\\build\\intermediates\\transforms\\dexMerger\\release\\0
-path.0=classes.dex
-renamed.0=classes.dex
